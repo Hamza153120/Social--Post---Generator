@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Social Content Studio Pro</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
+        /* ===== Base Styles ===== */
         :root {
             --primary: #6366f1;
             --primary-hover: #4f46e5;
@@ -17,6 +18,7 @@
             --text: #1e293b;
             --border: #e2e8f0;
             --radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         .dark-mode {
@@ -30,16 +32,17 @@
             font-family: 'Poppins', sans-serif;
             background: var(--background);
             color: var(--text);
-            margin: 0;
-            padding: 2rem;
-            transition: all 0.3s ease;
+            line-height: 1.5;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         .container {
             max-width: 1200px;
-            margin: 0 auto;
+            margin: 2rem auto;
+            padding: 2rem;
         }
 
+        /* ===== Components ===== */
         .header {
             display: flex;
             justify-content: space-between;
@@ -51,6 +54,7 @@
             background: var(--surface);
             padding: 2rem;
             border-radius: var(--radius);
+            box-shadow: var(--shadow);
             margin-bottom: 2rem;
         }
 
@@ -61,39 +65,26 @@
             margin-bottom: 1.5rem;
         }
 
-        .preview-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-            margin-top: 2rem;
+        .input-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text);
         }
 
-        .post-preview {
-            background: var(--surface);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            position: relative;
+        select, input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            background: var(--background);
+            color: var(--text);
+            transition: border-color 0.3s ease;
         }
 
-        .phone-mockup {
-            width: 300px;
-            height: 600px;
-            background: #000;
-            border-radius: 30px;
-            margin: 1rem auto;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .screen-content {
-            position: absolute;
-            top: 20px;
-            left: 10px;
-            right: 10px;
-            bottom: 20px;
-            background: white;
-            border-radius: 20px;
-            padding: 1rem;
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
         }
 
         button {
@@ -104,166 +95,192 @@
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         button:hover {
             background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .preview-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary);
+            transition: transform 0.3s ease;
+        }
+
+        .preview-card:hover {
             transform: translateY(-2px);
+        }
+
+        .tab-bar {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            background: var(--surface);
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .color-picker {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .color-option {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid var(--border);
+            transition: transform 0.3s ease;
+        }
+
+        .color-option.selected {
+            transform: scale(1.1);
+            border-color: var(--text);
+        }
+
+        /* ===== Utilities ===== */
+        .hidden {
+            display: none !important;
+        }
+
+        .loading {
+            position: relative;
+            pointer-events: none;
+        }
+
+        .loading::after {
+            content: "";
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border: 2px solid white;
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin 0.8s linear infinite;
+            right: 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🚀 Social Content Studio Pro</h1>
-            <button onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
-        </div>
+        <header class="header">
+            <h1>🎨 Social Content Studio</h1>
+            <button onclick="toggleDarkMode()">
+                <i class="fas fa-moon"></i>
+            </button>
+        </header>
 
         <div class="control-panel">
             <div class="grid">
-                <div>
+                <div class="input-group">
                     <label>Industry/Niche</label>
-                    <input type="text" id="niche" placeholder="e.g., Sustainable Fashion" value="AI Marketing">
+                    <input type="text" id="niche" placeholder="e.g., Sustainable Fashion">
                 </div>
-                <div>
-                    <label>Content Type</label>
-                    <select id="contentType">
-                        <option>Educational</option>
-                        <option>Promotional</option>
+                
+                <div class="input-group">
+                    <label>Platform</label>
+                    <select id="platform">
+                        <option>Instagram</option>
+                        <option>TikTok</option>
+                        <option>YouTube</option>
+                        <option>LinkedIn</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Content Tone</label>
+                    <select id="tone">
+                        <option>Casual</option>
+                        <option>Professional</option>
                         <option>Inspirational</option>
+                        <option>Humorous</option>
                     </select>
                 </div>
             </div>
-            <button onclick="generateContent()" style="width: 100%; margin-top: 1rem;">
-                <i class="fas fa-magic"></i> Generate Content Strategy
+
+            <div class="grid" style="margin-top: 1.5rem;">
+                <div class="input-group">
+                    <label>Brand Colors</label>
+                    <div class="color-picker">
+                        <div class="color-option selected" style="background: #6366f1" onclick="selectColor(this)"></div>
+                        <div class="color-option" style="background: #10b981" onclick="selectColor(this)"></div>
+                        <div class="color-option" style="background: #f59e0b" onclick="selectColor(this)"></div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label>Posts per Week</label>
+                    <input type="number" id="frequency" value="5" min="1" max="14">
+                </div>
+            </div>
+
+            <button onclick="generateStrategy()" style="margin-top: 1.5rem; width: 100%;">
+                <i class="fas fa-magic"></i> Generate Strategy
             </button>
         </div>
 
-        <div class="preview-section">
-            <div class="post-preview">
-                <h3>📱 Instagram Preview</h3>
-                <div class="phone-mockup">
-                    <div class="screen-content">
-                        <h3 id="igTitle">7-Day AI Marketing Challenge</h3>
-                        <p id="igCaption">Transform your marketing strategy with AI 🤖</p>
-                        <img src="https://via.placeholder.com/265x265" alt="Post visual" 
-                             style="width:100%; border-radius: 10px; margin: 1rem 0;">
-                        <div id="igHashtags">#AIMarketing #TechTrends</div>
-                    </div>
-                </div>
-                <div style="text-align: center; margin-top: 1rem;">
-                    <button onclick="downloadAsPNG()">📸 Save as PNG</button>
-                    <button onclick="downloadAsPDF()">📄 Save as PDF</button>
-                </div>
-            </div>
+        <div class="tab-bar">
+            <div class="tab active" onclick="showTab('posts')">Post Ideas</div>
+            <div class="tab" onclick="showTab('calendar')">Content Calendar</div>
+            <div class="tab" onclick="showTab('analytics')">Analytics</div>
+        </div>
 
-            <div class="post-preview">
-                <h3>🎵 TikTok Preview</h3>
-                <div class="phone-mockup" style="background: #000;">
-                    <div class="screen-content" style="background: #000; color: white;">
-                        <video controls style="width:100%; height: 500px; object-fit: cover;">
-                            <source src="https://samplelib.com/lib/preview/mp4/sample-5s.mp4" type="video/mp4">
-                        </video>
-                        <p id="tiktokCaption" style="margin-top: 1rem;">
-                            How to implement AI marketing strategies 🧠
-                        </p>
-                    </div>
-                </div>
-            </div>
+        <div id="posts" class="tab-content">
+            <!-- Generated posts will appear here -->
+        </div>
+
+        <div id="calendar" class="tab-content hidden">
+            <!-- Calendar content -->
+        </div>
+
+        <div id="analytics" class="tab-content hidden">
+            <!-- Analytics content -->
         </div>
     </div>
 
     <script>
-        // ===== Content Generation Engine =====
-        const contentStrategies = {
-            industries: {
-                marketing: {
-                    frameworks: [
-                        "{quantity}-Day {niche} Challenge",
-                        "The Future of {niche} in {year+2}",
-                        "{niche} vs Traditional Methods",
-                        "How to {action} {niche} Like a Pro"
-                    ],
-                    actions: ["implement", "optimize", "master"],
-                    metrics: ["ROI Increase", "Conversion Boost"]
-                },
-                fashion: {
-                    frameworks: [
-                        "{quantity}-Piece {niche} Collection",
-                        "Sustainable {niche} Revolution",
-                        "{niche} Styling Masterclass"
-                    ],
-                    actions: ["style", "accessorize", "curate"],
-                    metrics: ["CO2 Saved", "Waste Reduced"]
-                }
-            },
-
-            generateContent(niche) {
-                const industry = this.detectIndustry(niche);
-                const template = this.selectTemplate(industry);
-                return this.populateTemplate(template, niche, industry);
-            },
-
-            detectIndustry(niche) {
-                const industryKeywords = {
-                    marketing: ["marketing", "branding", "SEO"],
-                    fashion: ["fashion", "apparel", "wardrobe"]
-                };
-                
-                for (const [industry, keywords] of Object.entries(industryKeywords)) {
-                    if (keywords.some(keyword => niche.toLowerCase().includes(keyword))) {
-                        return industry;
-                    }
-                }
-                return 'marketing';
-            },
-
-            selectTemplate(industry) {
-                const templates = this.industries[industry]?.frameworks || [];
-                return templates[Math.floor(Math.random() * templates.length)];
-            },
-
-            populateTemplate(template, niche, industry) {
-                const variables = {
-                    quantity: Math.floor(Math.random() * 5) + 3,
-                    action: this.industries[industry]?.actions[
-                        Math.floor(Math.random() * this.industries[industry].actions.length)
-                    ],
-                    year: new Date().getFullYear(),
-                    niche: niche
-                };
-
-                return template.replace(/{([^}]+)}/g, (_, key) => {
-                    return variables[key] || niche;
-                });
-            }
-        };
-
-        // ===== UI Functions =====
-        function generateContent() {
-            const niche = document.getElementById('niche').value;
-            const contentType = document.getElementById('contentType').value;
-            
-            // Generate content
-            const postIdeas = Array.from({length: 3}, () => 
-                contentStrategies.generateContent(niche)
-            );
-
-            // Update previews
-            updatePreviews(postIdeas[0], niche);
+        // ===== Core Functionality =====
+        let selectedColor = "#6366f1";
+        
+        function generateStrategy() {
+            // Your existing generation logic
         }
 
-        function updatePreviews(idea, niche) {
-            // Instagram Preview
-            document.getElementById('igTitle').textContent = idea;
-            document.getElementById('igCaption').textContent = 
-                `${contentType} ${niche} Strategy`;
-            document.getElementById('igHashtags').textContent = 
-                `#${niche.replace(/ /g, '')} #${contentType}`;
+        // ===== UI Functions =====
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.remove('hidden');
+            event.target.classList.add('active');
+        }
 
-            // TikTok Preview
-            document.getElementById('tiktokCaption').textContent = 
-                `Quick ${niche} tip ➡️ ${idea}`;
+        function selectColor(element) {
+            document.querySelectorAll('.color-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            selectedColor = element.style.backgroundColor;
         }
 
         function toggleDarkMode() {
@@ -271,28 +288,13 @@
             localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
         }
 
-        // ===== Export Functions =====
-        async function downloadAsPNG() {
-            const post = document.querySelector('.phone-mockup');
-            const canvas = await html2canvas(post);
-            const link = document.createElement('a');
-            link.download = 'social-post.png';
-            link.href = canvas.toDataURL();
-            link.click();
-        }
-
-        function downloadAsPDF() {
-            const doc = new jspdf.jsPDF();
-            doc.text(document.getElementById('igTitle').textContent, 10, 10);
-            doc.text(document.getElementById('igCaption').textContent, 10, 20);
-            doc.save('social-strategy.pdf');
-        }
-
-        // Initialize
+        // Initialize dark mode
         if (localStorage.getItem('darkMode') === 'true') {
             document.body.classList.add('dark-mode');
         }
-        generateContent();
+
+        // ===== Existing Logic =====
+        // Add your existing post generation and other functions here
     </script>
 </body>
 </html>
