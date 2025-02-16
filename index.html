@@ -9,23 +9,50 @@
             --primary: #3B82F6;
             --secondary: #2563EB;
         }
-        /* [Keep previous base styles] */
-        .tab-buttons { display: flex; gap: 1rem; margin: 1rem 0; }
-        .tab { padding: 0.5rem 1rem; cursor: pointer; border-radius: 8px; }
-        .active-tab { background: var(--primary); color: white; }
-        .tooltip { position: relative; }
-        .tooltip-text { 
-            display: none;
-            position: absolute;
-            background: black;
-            color: white;
-            padding: 0.5rem;
-            border-radius: 4px;
-            bottom: 125%;
-            left: 50%;
-            transform: translateX(-50%);
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            max-width: 800px; 
+            margin: 2rem auto; 
+            padding: 0 1rem; 
+            background: #f8fafc;
         }
-        .tooltip:hover .tooltip-text { display: block; }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        select, input, button { 
+            padding: 0.75rem; 
+            margin: 0.5rem 0; 
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            width: 100%;
+        }
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover { background: var(--secondary); }
+        .grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1rem; }
+        .preview {
+            background: #f1f5f9;
+            padding: 1rem;
+            border-radius: 12px;
+            position: relative;
+            margin: 1rem 0;
+        }
+        .tab-buttons { display: flex; gap: 1rem; margin: 1rem 0; }
+        .tab { 
+            padding: 0.5rem 1rem; 
+            cursor: pointer; 
+            border-radius: 8px;
+            background: #e2e8f0;
+        }
+        .active-tab { background: var(--primary); color: white; }
         .color-picker { display: flex; gap: 0.5rem; }
         .color-option { 
             width: 30px;
@@ -40,6 +67,11 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 1rem;
             margin: 1rem 0;
+        }
+        .post-analysis > div {
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
         }
     </style>
 </head>
@@ -89,7 +121,7 @@
             </div>
         </div>
 
-        <button onclick="generateStrategy()"><i class="fas fa-rocket"></i> Generate Complete Strategy</button>
+        <button onclick="window.generateStrategy()"><i class="fas fa-rocket"></i> Generate Complete Strategy</button>
 
         <!-- Tabs -->
         <div class="tab-buttons">
@@ -99,7 +131,7 @@
         </div>
 
         <!-- Results -->
-        <div id="post-ideas" class="tab-content">
+        <div id="post-ideas" class="tab-content" style="display: block;">
             <!-- Generated Content -->
         </div>
 
@@ -135,7 +167,7 @@
             }
         };
 
-        // Advanced Analytics Metrics
+        // Analytics Metrics
         const metrics = {
             Instagram: { reach: "10K-50K", engagement: "3-5%", bestTime: "9-11 AM" },
             TikTok: { reach: "50K-200K", engagement: "5-8%", bestTime: "7-9 PM" },
@@ -211,31 +243,54 @@
                     <p><strong>Format:</strong> ${post.format}</p>
                     <p><strong>Tone:</strong> ${post.content}</p>
                     <p><strong>Hashtags:</strong> ${post.hashtags.join(" ")}</p>
-                    <div class="tooltip">
-                        <i class="fas fa-info-circle"></i>
-                        <div class="tooltip-text">
-                            Optimal Post Size: ${getOptimalDimensions(post.format)}
-                        </div>
-                    </div>
                 </div>
             `).join("");
         }
 
-        function getOptimalDimensions(format) {
-            const sizes = {
-                "Carousel Post": "1080x1350 px",
-                "Reels Video": "1080x1920 px",
-                "60-second Tutorial": "1080x1920 px",
-                "Case Study": "1200x627 px"
+        function generateCalendar(niche, frequency) {
+            return Array.from({length: frequency}, (_, i) => ({
+                day: i+1,
+                content: `${niche} Strategy Day ${i+1}`
+            }));
+        }
+
+        function displayCalendar(calendar) {
+            const container = document.getElementById("calendar");
+            container.innerHTML = `
+                <h3>🗓️ Content Calendar</h3>
+                ${calendar.map(item => `
+                    <div class="preview">
+                        <strong>Day ${item.day}:</strong> ${item.content}
+                    </div>
+                `).join("")}
+            `;
+        }
+
+        function generateAnalytics(platform) {
+            return {
+                reach: metrics[platform].reach,
+                engagement: metrics[platform].engagement,
+                bestTime: metrics[platform].bestTime
             };
-            return sizes[format] || "1080x1080 px";
+        }
+
+        function displayAnalytics(analytics) {
+            const container = document.getElementById("analytics");
+            container.innerHTML = `
+                <h3>📈 Performance Predictions</h3>
+                <div class="preview">
+                    <p>Estimated Reach: ${analytics.reach}</p>
+                    <p>Expected Engagement: ${analytics.engagement}</p>
+                    <p>Best Posting Time: ${analytics.bestTime}</p>
+                </div>
+            `;
         }
 
         function showTab(tabId) {
             document.querySelectorAll(".tab-content").forEach(el => el.style.display = "none");
             document.querySelectorAll(".tab").forEach(el => el.classList.remove("active-tab"));
             document.getElementById(tabId).style.display = "block";
-            event.target.classList.add("active-tab");
+            document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add("active-tab");
         }
 
         function selectColor(element) {
@@ -243,8 +298,6 @@
             element.classList.add("selected");
             selectedColor = element.style.backgroundColor;
         }
-
-        // [Add remaining functions for calendar/analytics]
     </script>
 </body>
 </html>
