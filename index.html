@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ultimate Social Content Studio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #3B82F6;
+            --secondary: #2563EB;
+        }
+        /* [Keep previous base styles] */
+        .tab-buttons { display: flex; gap: 1rem; margin: 1rem 0; }
+        .tab { padding: 0.5rem 1rem; cursor: pointer; border-radius: 8px; }
+        .active-tab { background: var(--primary); color: white; }
+        .tooltip { position: relative; }
+        .tooltip-text { 
+            display: none;
+            position: absolute;
+            background: black;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 4px;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .tooltip:hover .tooltip-text { display: block; }
+        .color-picker { display: flex; gap: 0.5rem; }
+        .color-option { 
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .color-option.selected { border-color: black; }
+        .post-analysis { 
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Ultimate Social Content Studio</h1>
+        
+        <!-- Control Panel -->
+        <div class="grid">
+            <div>
+                <label>Niche/Industry</label>
+                <input type="text" id="niche" placeholder="e.g., Vegan Skincare, AI Tools">
+            </div>
+            <div>
+                <label>Platform</label>
+                <select id="platform">
+                    <option>Instagram</option>
+                    <option>TikTok</option>
+                    <option>YouTube</option>
+                    <option>LinkedIn</option>
+                </select>
+            </div>
+            <div>
+                <label>Content Tone</label>
+                <select id="tone">
+                    <option>Casual</option>
+                    <option>Professional</option>
+                    <option>Funny</option>
+                    <option>Inspirational</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Advanced Options -->
+        <div class="post-analysis">
+            <div>
+                <label>Post Frequency</label>
+                <input type="number" id="frequency" value="3" min="1" max="7">
+            </div>
+            <div>
+                <label>Brand Colors</label>
+                <div class="color-picker">
+                    <div class="color-option" style="background: #3B82F6" onclick="selectColor(this)"></div>
+                    <div class="color-option" style="background: #10B981" onclick="selectColor(this)"></div>
+                    <div class="color-option" style="background: #F59E0B" onclick="selectColor(this)"></div>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="generateStrategy()"><i class="fas fa-rocket"></i> Generate Complete Strategy</button>
+
+        <!-- Tabs -->
+        <div class="tab-buttons">
+            <div class="tab active-tab" onclick="showTab('post-ideas')">Post Ideas</div>
+            <div class="tab" onclick="showTab('calendar')">Content Calendar</div>
+            <div class="tab" onclick="showTab('analytics')">Analytics</div>
+        </div>
+
+        <!-- Results -->
+        <div id="post-ideas" class="tab-content">
+            <!-- Generated Content -->
+        </div>
+
+        <div id="calendar" class="tab-content" style="display: none;">
+            <!-- Calendar Content -->
+        </div>
+
+        <div id="analytics" class="tab-content" style="display: none;">
+            <!-- Analytics Content -->
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Templates Database
+        const templateLibrary = {
+            base: [
+                "The Ultimate Guide to {niche} 🧭",
+                "5 {niche} Mistakes Everyone Makes ❌",
+                "{niche} Success Stories: Real Case Studies 📈",
+                "How We Revolutionized {niche} 💡",
+                "{niche} vs Traditional Methods: Full Comparison ⚔️"
+            ],
+            platform: {
+                Instagram: ["Carousel Post", "Reels Video", "Stories Series"],
+                TikTok: ["60-second Tutorial", "Challenge Video", "Behind-the-Scenes"],
+                LinkedIn: ["Industry Report", "Thought Leadership", "Case Study"]
+            },
+            toneModifiers: {
+                Casual: ["🔥 Pro tip:", "PSA:", "Swipe 👉", "Drop a ❤️ if..."],
+                Professional: ["Key takeaway:", "Research shows:", "Industry leaders agree:"],
+                Funny: ["Plot twist:", "No cap:", "Spoiler alert:", "The tea ☕"],
+                Inspirational: ["Remember:", "You've got this!", "Small steps:"]
+            }
+        };
+
+        // Advanced Analytics Metrics
+        const metrics = {
+            Instagram: { reach: "10K-50K", engagement: "3-5%", bestTime: "9-11 AM" },
+            TikTok: { reach: "50K-200K", engagement: "5-8%", bestTime: "7-9 PM" },
+            LinkedIn: { reach: "5K-20K", engagement: "1-2%", bestTime: "11 AM-1 PM" }
+        };
+
+        let selectedColor = "#3B82F6";
+
+        function generateStrategy() {
+            const niche = document.getElementById("niche").value || "Your Niche";
+            const platform = document.getElementById("platform").value;
+            const tone = document.getElementById("tone").value;
+            const frequency = document.getElementById("frequency").value;
+
+            // Generate Content
+            const posts = generatePosts(niche, platform, tone, frequency);
+            const calendar = generateCalendar(niche, frequency);
+            const analytics = generateAnalytics(platform);
+
+            // Display Results
+            displayPosts(posts);
+            displayCalendar(calendar);
+            displayAnalytics(analytics);
+            showTab('post-ideas');
+        }
+
+        function generatePosts(niche, platform, tone, count) {
+            return Array.from({length: count}, (_, i) => {
+                const template = templateLibrary.base[i % templateLibrary.base.length];
+                const platformFormat = templateLibrary.platform[platform][i % 3];
+                const toneModifier = templateLibrary.toneModifiers[tone][i % 4];
+                
+                return {
+                    title: template.replace(/{niche}/g, niche),
+                    content: `${toneModifier} ${generateCTAs(platform)}`,
+                    hashtags: generateSmartHashtags(niche, platform),
+                    format: platformFormat,
+                    color: selectedColor
+                };
+            });
+        }
+
+        function generateSmartHashtags(niche, platform) {
+            const cleanNiche = niche.replace(/ /g, "");
+            const platformTags = {
+                Instagram: ["#InstaGood", "#ExplorePage"],
+                TikTok: ["#FYP", "#ForYouPage"],
+                LinkedIn: ["#Leadership", "#IndustryInsights"]
+            };
+            
+            return [
+                `#${cleanNiche}Tips`,
+                `#${cleanNiche}Hacks`,
+                ...platformTags[platform],
+                "#TrendAlert"
+            ].slice(0, 5);
+        }
+
+        function generateCTAs(platform) {
+            const ctas = {
+                Instagram: ["Swipe → Learn more", "Double tap if you agree ❤️"],
+                TikTok: ["Comment your thoughts 💬", "Duet this video!"],
+                LinkedIn: ["Share with your network ↗️", "Comment your perspective"]
+            };
+            return ctas[platform][Math.floor(Math.random() * 2)];
+        }
+
+        function displayPosts(posts) {
+            const container = document.getElementById("post-ideas");
+            container.innerHTML = posts.map(post => `
+                <div class="preview" style="border-left: 4px solid ${post.color}">
+                    <h3>${post.title}</h3>
+                    <p><strong>Format:</strong> ${post.format}</p>
+                    <p><strong>Tone:</strong> ${post.content}</p>
+                    <p><strong>Hashtags:</strong> ${post.hashtags.join(" ")}</p>
+                    <div class="tooltip">
+                        <i class="fas fa-info-circle"></i>
+                        <div class="tooltip-text">
+                            Optimal Post Size: ${getOptimalDimensions(post.format)}
+                        </div>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function getOptimalDimensions(format) {
+            const sizes = {
+                "Carousel Post": "1080x1350 px",
+                "Reels Video": "1080x1920 px",
+                "60-second Tutorial": "1080x1920 px",
+                "Case Study": "1200x627 px"
+            };
+            return sizes[format] || "1080x1080 px";
+        }
+
+        function showTab(tabId) {
+            document.querySelectorAll(".tab-content").forEach(el => el.style.display = "none");
+            document.querySelectorAll(".tab").forEach(el => el.classList.remove("active-tab"));
+            document.getElementById(tabId).style.display = "block";
+            event.target.classList.add("active-tab");
+        }
+
+        function selectColor(element) {
+            document.querySelectorAll(".color-option").forEach(el => el.classList.remove("selected"));
+            element.classList.add("selected");
+            selectedColor = element.style.backgroundColor;
+        }
+
+        // [Add remaining functions for calendar/analytics]
+    </script>
+</body>
+</html>
