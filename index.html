@@ -3,38 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pro Social Media Studio</title>
+    <title>Unlimited Post Ideas Generator</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* ===== Enhanced Mobile Styles ===== */
-        :root {
-            --primary: #6366f1;
-            --secondary: #4f46e5;
-            --background: #ffffff;
-            --text: #1e293b;
-            --radius: 12px;
-            --shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .dark-mode {
-            --background: #0f172a;
-            --text: #f8fafc;
-            --surface: #1e293b;
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
+        :root {
+            --primary: #6366f1;
+            --text: #1e293b;
+            --background: #ffffff;
+            --radius: 12px;
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
             background: var(--background);
             color: var(--text);
-            line-height: 1.6;
             padding: 1rem;
+            min-height: 100vh;
         }
 
         .container {
@@ -42,175 +32,145 @@
             margin: 0 auto;
         }
 
-        /* ===== New Feature: Dashboard Tabs ===== */
-        .dashboard-tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin: 1rem 0;
-            overflow-x: auto;
-            padding-bottom: 0.5rem;
-        }
-
-        .tab {
-            padding: 0.75rem 1.5rem;
+        .generator-form {
+            background: #f8fafc;
+            padding: 1.5rem;
             border-radius: var(--radius);
-            background: var(--surface);
-            cursor: pointer;
-            white-space: nowrap;
+            margin-bottom: 1.5rem;
+            position: sticky;
+            top: 1rem;
+            z-index: 2;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        .tab.active {
+        input, button {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        button {
             background: var(--primary);
             color: white;
-        }
-
-        /* ===== New Feature: Analytics Chart ===== */
-        .analytics-card {
-            padding: 1.5rem;
-            background: var(--surface);
-            border-radius: var(--radius);
-            margin: 1rem 0;
-        }
-
-        /* ===== Enhanced Post Editor ===== */
-        .post-editor {
-            border: 2px solid var(--surface);
-            border-radius: var(--radius);
-            padding: 1rem;
-            margin: 1rem 0;
-        }
-
-        .editor-toolbar {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .editor-toolbar button {
-            padding: 0.5rem;
-            background: var(--surface);
             border: none;
-            border-radius: 6px;
+            font-weight: 600;
             cursor: pointer;
+            transition: filter 0.2s;
         }
 
-        /* Previous styles remain with enhancements */
+        .post-output {
+            margin-top: 1rem;
+        }
+
+        .post-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            margin: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .load-more {
+            text-align: center;
+            margin: 2rem 0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header Section -->
-        <header class="header">
-            <h1>🚀 Social Media Pro Studio</h1>
-            <button onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
-        </header>
-
-        <!-- Dashboard Tabs -->
-        <div class="dashboard-tabs">
-            <div class="tab active" onclick="showTab('generator')">Content Generator</div>
-            <div class="tab" onclick="showTab('calendar')">Content Calendar</div>
-            <div class="tab" onclick="showTab('analytics')">Analytics</div>
+        <h1 style="margin-bottom: 1rem;">✨ Unlimited Post Ideas</h1>
+        
+        <div class="generator-form">
+            <input type="text" id="niche" placeholder="Enter your niche (e.g., Vegan Cooking)" value="Digital Marketing">
+            <button onclick="generateNewIdeas()" style="margin-top: 1rem;">Generate Ideas</button>
         </div>
 
-        <!-- Content Generator Tab -->
-        <div id="generator" class="tab-content">
-            <!-- Previous generator content -->
-            <div class="post-editor">
-                <div class="editor-toolbar">
-                    <button onclick="formatText('bold')"><strong>B</strong></button>
-                    <button onclick="formatText('italic')"><em>I</em></button>
-                    <button onclick="insertHashtag()">#</button>
-                </div>
-                <div id="editablePost" class="post-card" contenteditable="true"></div>
-            </div>
-        </div>
-
-        <!-- Content Calendar Tab -->
-        <div id="calendar" class="tab-content hidden">
-            <div class="analytics-card">
-                <h3>📅 Content Calendar</h3>
-                <div id="calendarGrid" class="calendar-grid"></div>
-            </div>
-        </div>
-
-        <!-- Analytics Tab -->
-        <div id="analytics" class="tab-content hidden">
-            <div class="analytics-card">
-                <h3>📈 Performance Analytics</h3>
-                <canvas id="performanceChart"></canvas>
-            </div>
+        <div class="post-output" id="output"></div>
+        <div class="load-more">
+            <button onclick="generateNewIdeas()">Load More Ideas</button>
         </div>
     </div>
 
     <script>
-        // ===== New Feature: Advanced Analytics =====
-        let performanceChart;
+        // ===== Advanced Idea Generation Engine =====
+        const ideaBank = {
+            frameworks: [
+                "{action} {niche} {target} with {method}",
+                "{number} {adjective} Ways to {action} {niche}",
+                "{niche} {target}: From {beginner} to {expert}",
+                "The Ultimate Guide to {niche} {specialization}",
+                "{niche} vs {competitor}: {comparison} Showdown",
+                "{timeframe} {niche} Challenge for {target}",
+                "How {industry} Leaders {action} {niche}"
+            ],
+            
+            modifiers: {
+                action: ["Master", "Transform", "Optimize", "Revolutionize", "Elevate"],
+                adjective: ["Creative", "Proven", "Unusual", "Effective", "Innovative"],
+                target: ["Strategies", "Techniques", "Systems", "Methods", "Approaches"],
+                method: ["AI", "Community Building", "Data Analysis", "Storytelling", "Automation"],
+                beginner: ["Newbies", "Startups", "Beginners", "First-Timers"],
+                expert: ["Experts", "Agencies", "Professionals", "Veterans"],
+                timeframe: ["7-Day", "30-Day", "90-Day", "1-Year"],
+                comparison: ["Complete", "Detailed", "Comprehensive", "In-Depth"],
+                specialization: ["in 2024", "for Startups", "Using AI", "on a Budget"],
+                competitor: ["Traditional Methods", "Industry Standards", "Common Practices"]
+            },
 
-        function initChart() {
-            const ctx = document.getElementById('performanceChart').getContext('2d');
-            performanceChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Reach', 'Engagement', 'Clicks', 'Conversions'],
-                    datasets: [{
-                        label: 'Performance Metrics',
-                        data: [5000, 35, 120, 18],
-                        backgroundColor: '#6366f155'
-                    }]
-                }
-            });
+            generatedIdeas: new Set(),
+
+            generateUniqueIdea(niche) {
+                let idea;
+                do {
+                    const template = this.frameworks[Math.floor(Math.random() * this.frameworks.length)];
+                    idea = template.replace(/{(\w+)}/g, (_, key) => {
+                        const options = this.modifiers[key];
+                        return options ? options[Math.floor(Math.random() * options.length)] : niche;
+                    });
+                } while(this.generatedIdeas.has(idea));
+                
+                this.generatedIdeas.add(idea);
+                return idea;
+            }
+        };
+
+        function generateNewIdeas() {
+            const niche = document.getElementById('niche').value || "Your Niche";
+            const output = document.getElementById('output');
+            
+            // Generate 5 new unique ideas
+            for(let i = 0; i < 5; i++) {
+                const idea = ideaBank.generateUniqueIdea(niche);
+                const card = document.createElement('div');
+                card.className = 'post-card';
+                card.innerHTML = `
+                    <p>${idea}</p>
+                    <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                        <button onclick="copyToClipboard('${idea}')">📋 Copy</button>
+                        <button onclick="saveIdea('${idea}')">💾 Save</button>
+                    </div>
+                `;
+                output.appendChild(card);
+            }
         }
 
-        // ===== New Feature: Content Calendar =====
-        function generateCalendar() {
-            const calendar = document.getElementById('calendarGrid');
-            const days = Array.from({length: 7}, (_, i) => {
-                const date = new Date();
-                date.setDate(date.getDate() + i);
-                return date;
-            });
-
-            calendar.innerHTML = days.map(date => `
-                <div class="calendar-day">
-                    <h4>${date.toLocaleDateString()}</h4>
-                    <div class="scheduled-posts"></div>
-                </div>
-            `).join('');
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            alert('Copied to clipboard!');
         }
 
-        // ===== New Feature: Rich Text Editor =====
-        function formatText(style) {
-            document.execCommand(style);
+        function saveIdea(idea) {
+            const saved = JSON.parse(localStorage.getItem('savedIdeas') || '[]');
+            saved.push(idea);
+            localStorage.setItem('savedIdeas', JSON.stringify(saved));
+            alert('Idea saved!');
         }
 
-        function insertHashtag() {
-            const hashtags = ['Trending', 'Viral', 'Tips', 'Success'];
-            const hashtag = `#${hashtags[Math.floor(Math.random() * hashtags.length)]}`;
-            document.execCommand('insertText', false, hashtag);
-        }
-
-        // ===== Enhanced Dark Mode =====
-        function toggleDarkMode() {
-            document.body.classList.toggle('dark-mode');
-            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
-            if(performanceChart) performanceChart.update();
-        }
-
-        // ===== Tab System =====
-        function showTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-            document.getElementById(tabId).classList.remove('hidden');
-            event.target.classList.add('active');
-
-            if(tabId === 'analytics' && !performanceChart) initChart();
-            if(tabId === 'calendar') generateCalendar();
-        }
-
-        // Initialize
-        if(localStorage.getItem('darkMode') === 'true') document.body.classList.add('dark-mode');
-        generateContent();
-        generateCalendar();
+        // Initial generation
+        generateNewIdeas();
     </script>
 </body>
 </html>
