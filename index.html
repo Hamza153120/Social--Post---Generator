@@ -1,176 +1,303 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Unlimited Post Ideas Generator</title>
+    <title>Ultimate Social Content Studio</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
         :root {
-            --primary: #6366f1;
-            --text: #1e293b;
-            --background: #ffffff;
-            --radius: 12px;
+            --primary: #3B82F6;
+            --secondary: #2563EB;
         }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--background);
-            color: var(--text);
-            padding: 1rem;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .generator-form {
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            max-width: 800px; 
+            margin: 2rem auto; 
+            padding: 0 1rem; 
             background: #f8fafc;
-            padding: 1.5rem;
-            border-radius: var(--radius);
-            margin-bottom: 1.5rem;
-            position: sticky;
-            top: 1rem;
-            z-index: 2;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-
-        input, button {
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        select, input, button { 
+            padding: 0.75rem; 
+            margin: 0.5rem 0; 
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
             width: 100%;
-            padding: 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: var(--radius);
-            font-size: 1rem;
-            margin-top: 0.5rem;
         }
-
         button {
             background: var(--primary);
             color: white;
             border: none;
-            font-weight: 600;
             cursor: pointer;
-            transition: filter 0.2s;
+            transition: 0.3s;
         }
-
-        .post-output {
-            margin-top: 1rem;
-        }
-
-        .post-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: var(--radius);
+        button:hover { background: var(--secondary); }
+        .grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1rem; }
+        .preview {
+            background: #f1f5f9;
+            padding: 1rem;
+            border-radius: 12px;
+            position: relative;
             margin: 1rem 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
-
-        .load-more {
-            text-align: center;
-            margin: 2rem 0;
+        .tab-buttons { display: flex; gap: 1rem; margin: 1rem 0; }
+        .tab { 
+            padding: 0.5rem 1rem; 
+            cursor: pointer; 
+            border-radius: 8px;
+            background: #e2e8f0;
+        }
+        .active-tab { background: var(--primary); color: white; }
+        .color-picker { display: flex; gap: 0.5rem; }
+        .color-option { 
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .color-option.selected { border-color: black; }
+        .post-analysis { 
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .post-analysis > div {
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 8px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 style="margin-bottom: 1rem;">✨ Unlimited Post Ideas</h1>
+        <h1>🚀 Ultimate Social Content Studio</h1>
         
-        <div class="generator-form">
-            <input type="text" id="niche" placeholder="Enter your niche (e.g., Vegan Cooking)" value="Digital Marketing">
-            <button onclick="generateNewIdeas()" style="margin-top: 1rem;">Generate Ideas</button>
+        <!-- Control Panel -->
+        <div class="grid">
+            <div>
+                <label>Niche/Industry</label>
+                <input type="text" id="niche" placeholder="e.g., Vegan Skincare, AI Tools">
+            </div>
+            <div>
+                <label>Platform</label>
+                <select id="platform">
+                    <option>Instagram</option>
+                    <option>TikTok</option>
+                    <option>YouTube</option>
+                    <option>LinkedIn</option>
+                </select>
+            </div>
+            <div>
+                <label>Content Tone</label>
+                <select id="tone">
+                    <option>Casual</option>
+                    <option>Professional</option>
+                    <option>Funny</option>
+                    <option>Inspirational</option>
+                </select>
+            </div>
         </div>
 
-        <div class="post-output" id="output"></div>
-        <div class="load-more">
-            <button onclick="generateNewIdeas()">Load More Ideas</button>
+        <!-- Advanced Options -->
+        <div class="post-analysis">
+            <div>
+                <label>Post Frequency</label>
+                <input type="number" id="frequency" value="3" min="1" max="7">
+            </div>
+            <div>
+                <label>Brand Colors</label>
+                <div class="color-picker">
+                    <div class="color-option" style="background: #3B82F6" onclick="selectColor(this)"></div>
+                    <div class="color-option" style="background: #10B981" onclick="selectColor(this)"></div>
+                    <div class="color-option" style="background: #F59E0B" onclick="selectColor(this)"></div>
+                </div>
+            </div>
+        </div>
+
+        <button onclick="window.generateStrategy()"><i class="fas fa-rocket"></i> Generate Complete Strategy</button>
+
+        <!-- Tabs -->
+        <div class="tab-buttons">
+            <div class="tab active-tab" onclick="showTab('post-ideas')">Post Ideas</div>
+            <div class="tab" onclick="showTab('calendar')">Content Calendar</div>
+            <div class="tab" onclick="showTab('analytics')">Analytics</div>
+        </div>
+
+        <!-- Results -->
+        <div id="post-ideas" class="tab-content" style="display: block;">
+            <!-- Generated Content -->
+        </div>
+
+        <div id="calendar" class="tab-content" style="display: none;">
+            <!-- Calendar Content -->
+        </div>
+
+        <div id="analytics" class="tab-content" style="display: none;">
+            <!-- Analytics Content -->
         </div>
     </div>
 
     <script>
-        // ===== Advanced Idea Generation Engine =====
-        const ideaBank = {
-            frameworks: [
-                "{action} {niche} {target} with {method}",
-                "{number} {adjective} Ways to {action} {niche}",
-                "{niche} {target}: From {beginner} to {expert}",
-                "The Ultimate Guide to {niche} {specialization}",
-                "{niche} vs {competitor}: {comparison} Showdown",
-                "{timeframe} {niche} Challenge for {target}",
-                "How {industry} Leaders {action} {niche}"
+        // Enhanced Templates Database
+        const templateLibrary = {
+            base: [
+                "The Ultimate Guide to {niche} 🧭",
+                "5 {niche} Mistakes Everyone Makes ❌",
+                "{niche} Success Stories: Real Case Studies 📈",
+                "How We Revolutionized {niche} 💡",
+                "{niche} vs Traditional Methods: Full Comparison ⚔️"
             ],
-            
-            modifiers: {
-                action: ["Master", "Transform", "Optimize", "Revolutionize", "Elevate"],
-                adjective: ["Creative", "Proven", "Unusual", "Effective", "Innovative"],
-                target: ["Strategies", "Techniques", "Systems", "Methods", "Approaches"],
-                method: ["AI", "Community Building", "Data Analysis", "Storytelling", "Automation"],
-                beginner: ["Newbies", "Startups", "Beginners", "First-Timers"],
-                expert: ["Experts", "Agencies", "Professionals", "Veterans"],
-                timeframe: ["7-Day", "30-Day", "90-Day", "1-Year"],
-                comparison: ["Complete", "Detailed", "Comprehensive", "In-Depth"],
-                specialization: ["in 2024", "for Startups", "Using AI", "on a Budget"],
-                competitor: ["Traditional Methods", "Industry Standards", "Common Practices"]
+            platform: {
+                Instagram: ["Carousel Post", "Reels Video", "Stories Series"],
+                TikTok: ["60-second Tutorial", "Challenge Video", "Behind-the-Scenes"],
+                LinkedIn: ["Industry Report", "Thought Leadership", "Case Study"]
             },
-
-            generatedIdeas: new Set(),
-
-            generateUniqueIdea(niche) {
-                let idea;
-                do {
-                    const template = this.frameworks[Math.floor(Math.random() * this.frameworks.length)];
-                    idea = template.replace(/{(\w+)}/g, (_, key) => {
-                        const options = this.modifiers[key];
-                        return options ? options[Math.floor(Math.random() * options.length)] : niche;
-                    });
-                } while(this.generatedIdeas.has(idea));
-                
-                this.generatedIdeas.add(idea);
-                return idea;
+            toneModifiers: {
+                Casual: ["🔥 Pro tip:", "PSA:", "Swipe 👉", "Drop a ❤️ if..."],
+                Professional: ["Key takeaway:", "Research shows:", "Industry leaders agree:"],
+                Funny: ["Plot twist:", "No cap:", "Spoiler alert:", "The tea ☕"],
+                Inspirational: ["Remember:", "You've got this!", "Small steps:"]
             }
         };
 
-        function generateNewIdeas() {
-            const niche = document.getElementById('niche').value || "Your Niche";
-            const output = document.getElementById('output');
+        // Analytics Metrics
+        const metrics = {
+            Instagram: { reach: "10K-50K", engagement: "3-5%", bestTime: "9-11 AM" },
+            TikTok: { reach: "50K-200K", engagement: "5-8%", bestTime: "7-9 PM" },
+            LinkedIn: { reach: "5K-20K", engagement: "1-2%", bestTime: "11 AM-1 PM" }
+        };
+
+        let selectedColor = "#3B82F6";
+
+        function generateStrategy() {
+            const niche = document.getElementById("niche").value || "Your Niche";
+            const platform = document.getElementById("platform").value;
+            const tone = document.getElementById("tone").value;
+            const frequency = document.getElementById("frequency").value;
+
+            // Generate Content
+            const posts = generatePosts(niche, platform, tone, frequency);
+            const calendar = generateCalendar(niche, frequency);
+            const analytics = generateAnalytics(platform);
+
+            // Display Results
+            displayPosts(posts);
+            displayCalendar(calendar);
+            displayAnalytics(analytics);
+            showTab('post-ideas');
+        }
+
+        function generatePosts(niche, platform, tone, count) {
+            return Array.from({length: count}, (_, i) => {
+                const template = templateLibrary.base[i % templateLibrary.base.length];
+                const platformFormat = templateLibrary.platform[platform][i % 3];
+                const toneModifier = templateLibrary.toneModifiers[tone][i % 4];
+                
+                return {
+                    title: template.replace(/{niche}/g, niche),
+                    content: `${toneModifier} ${generateCTAs(platform)}`,
+                    hashtags: generateSmartHashtags(niche, platform),
+                    format: platformFormat,
+                    color: selectedColor
+                };
+            });
+        }
+
+        function generateSmartHashtags(niche, platform) {
+            const cleanNiche = niche.replace(/ /g, "");
+            const platformTags = {
+                Instagram: ["#InstaGood", "#ExplorePage"],
+                TikTok: ["#FYP", "#ForYouPage"],
+                LinkedIn: ["#Leadership", "#IndustryInsights"]
+            };
             
-            // Generate 5 new unique ideas
-            for(let i = 0; i < 5; i++) {
-                const idea = ideaBank.generateUniqueIdea(niche);
-                const card = document.createElement('div');
-                card.className = 'post-card';
-                card.innerHTML = `
-                    <p>${idea}</p>
-                    <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
-                        <button onclick="copyToClipboard('${idea}')">📋 Copy</button>
-                        <button onclick="saveIdea('${idea}')">💾 Save</button>
+            return [
+                `#${cleanNiche}Tips`,
+                `#${cleanNiche}Hacks`,
+                ...platformTags[platform],
+                "#TrendAlert"
+            ].slice(0, 5);
+        }
+
+        function generateCTAs(platform) {
+            const ctas = {
+                Instagram: ["Swipe → Learn more", "Double tap if you agree ❤️"],
+                TikTok: ["Comment your thoughts 💬", "Duet this video!"],
+                LinkedIn: ["Share with your network ↗️", "Comment your perspective"]
+            };
+            return ctas[platform][Math.floor(Math.random() * 2)];
+        }
+
+        function displayPosts(posts) {
+            const container = document.getElementById("post-ideas");
+            container.innerHTML = posts.map(post => `
+                <div class="preview" style="border-left: 4px solid ${post.color}">
+                    <h3>${post.title}</h3>
+                    <p><strong>Format:</strong> ${post.format}</p>
+                    <p><strong>Tone:</strong> ${post.content}</p>
+                    <p><strong>Hashtags:</strong> ${post.hashtags.join(" ")}</p>
+                </div>
+            `).join("");
+        }
+
+        function generateCalendar(niche, frequency) {
+            return Array.from({length: frequency}, (_, i) => ({
+                day: i+1,
+                content: `${niche} Strategy Day ${i+1}`
+            }));
+        }
+
+        function displayCalendar(calendar) {
+            const container = document.getElementById("calendar");
+            container.innerHTML = `
+                <h3>🗓️ Content Calendar</h3>
+                ${calendar.map(item => `
+                    <div class="preview">
+                        <strong>Day ${item.day}:</strong> ${item.content}
                     </div>
-                `;
-                output.appendChild(card);
-            }
+                `).join("")}
+            `;
         }
 
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text);
-            alert('Copied to clipboard!');
+        function generateAnalytics(platform) {
+            return {
+                reach: metrics[platform].reach,
+                engagement: metrics[platform].engagement,
+                bestTime: metrics[platform].bestTime
+            };
         }
 
-        function saveIdea(idea) {
-            const saved = JSON.parse(localStorage.getItem('savedIdeas') || '[]');
-            saved.push(idea);
-            localStorage.setItem('savedIdeas', JSON.stringify(saved));
-            alert('Idea saved!');
+        function displayAnalytics(analytics) {
+            const container = document.getElementById("analytics");
+            container.innerHTML = `
+                <h3>📈 Performance Predictions</h3>
+                <div class="preview">
+                    <p>Estimated Reach: ${analytics.reach}</p>
+                    <p>Expected Engagement: ${analytics.engagement}</p>
+                    <p>Best Posting Time: ${analytics.bestTime}</p>
+                </div>
+            `;
         }
 
-        // Initial generation
-        generateNewIdeas();
+        function showTab(tabId) {
+            document.querySelectorAll(".tab-content").forEach(el => el.style.display = "none");
+            document.querySelectorAll(".tab").forEach(el => el.classList.remove("active-tab"));
+            document.getElementById(tabId).style.display = "block";
+            document.querySelector(`[onclick="showTab('${tabId}')"]`).classList.add("active-tab");
+        }
+
+        function selectColor(element) {
+            document.querySelectorAll(".color-option").forEach(el => el.classList.remove("selected"));
+            element.classList.add("selected");
+            selectedColor = element.style.backgroundColor;
+        }
     </script>
 </body>
 </html>
